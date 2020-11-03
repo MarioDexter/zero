@@ -13,13 +13,13 @@
         <el-menu
           background-color="#333744"
           text-color="#fff"
-          active-text-color="#409eff" :unique-opened="true" :collapse="isCollapse" :collapse-transition="false">
-          <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
+          active-text-color="#409eff" :unique-opened="true" :collapse="isCollapse" :collapse-transition="false" router :default-active="activePath">
+          <el-submenu :index="'/' + item.path" v-for="item in menulist" :key="item.id">
             <template slot="title">
               <i :class="iconsObj[item.id]"></i>
               <span>{{ item.authName }}</span>
             </template>
-            <el-menu-item :index="subitem.id + ''"  v-for="subitem in item.children" :key="subitem.id">
+            <el-menu-item :index="'/' + subitem.path"  v-for="subitem in item.children" :key="subitem.id" @click="savaNavStatus('/' + subitem.path)">
               <template slot="title">
                 <i class="el-icon-menu"></i>
                 <span>{{ subitem.authName }}</span>
@@ -28,7 +28,9 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -45,11 +47,13 @@ export default {
         102: 'iconfont icon-danju-tianchong',
         145: 'iconfont icon-baobiao'
       },
-      isCollapse: false
+      isCollapse: false,
+      activePath: ''
     }
   },
   created () {
     this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   methods: {
     logout () {
@@ -64,6 +68,10 @@ export default {
     },
     toggleCollapse () {
       this.isCollapse = !this.isCollapse
+    },
+    savaNavStatus (activePath) {
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     }
   }
 }
